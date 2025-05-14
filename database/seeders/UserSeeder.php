@@ -19,15 +19,18 @@ class UserSeeder extends Seeder
     Role::firstOrCreate(['name' => 'Responsable']);
     Role::firstOrCreate(['name' => 'Usuario']);
 
-    $admin = User::create([
-        'nombre' => 'Admin',
-        'email' => 'admin@example.com',
-        'password' => Hash::make('password'),
-        'rol' => 'Administrador',
-        'estado' => 'Activo',
-        'fecha_creacion' => now(),
-    ]);
+    $admin = User::firstOrCreate(
+        ['email' => 'admin@example.com'],
+        [
+            'name' => 'Admin',
+            'password' => Hash::make('password'),
+            'rol' => 'Administrador',
+            'estado' => 'Activo',
+            'fecha_creacion' => now(),
+        ]);
 
-    $admin->assignRole('Administrador');
+        if (!$admin->hasRole('Administrador')) {
+            $admin->assignRole('Administrador');
+        }
 }
 }

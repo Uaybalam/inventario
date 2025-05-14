@@ -9,6 +9,7 @@ class ProductoSku extends Model
     use HasFactory;
 
     protected $primaryKey = 'id_producto_sku';
+    protected $fillable = ['name', 'descripcion'];
 
     public function categoria()
     {
@@ -25,3 +26,5 @@ class ProductoSku extends Model
         return $this->hasMany(Transaccion::class, 'id_producto_sku');
     }
 }
+    
+

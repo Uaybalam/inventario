@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InventarioResource\Pages;
 use App\Filament\Resources\InventarioResource\RelationManagers;
 use App\Models\Inventario;
+use App\Models\ProductoSku;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,6 +13,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DatePicker;
 
 class InventarioResource extends Resource
 {
@@ -24,7 +29,7 @@ class InventarioResource extends Resource
         return $form
         ->schema([
             Select::make('id_producto_sku')
-                ->relationship('productoSku', 'nombre')
+                ->relationship('productoSKU', 'name')
                 ->label('Producto')
                 ->required(),
             TextInput::make('cantidad')->numeric()->required(),
@@ -36,7 +41,7 @@ class InventarioResource extends Resource
     {
         return $table
         ->columns([
-            TextColumn::make('productoSku.nombre')->label('Producto'),
+            TextColumn::make('productoSKU.nombre')->label('Producto'),
             TextColumn::make('cantidad'),
             TextColumn::make('fecha_actualizacion')->date(),
         ])
@@ -59,6 +64,10 @@ class InventarioResource extends Resource
             //
         ];
     }
+    public function productoSKU()
+{
+    return $this->belongsTo(ProductoSku::class, 'id_producto_sku');
+}
 
     public static function getPages(): array
     {

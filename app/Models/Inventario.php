@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory; 
+use \App\Models\ProductoSku;
+use \App\Models\ubicacion;
+use \App\Models\Responsable;
+
 class Inventario extends Model
 {
     use HasFactory;
