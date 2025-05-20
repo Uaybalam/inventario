@@ -12,6 +12,11 @@ class Ubicacion extends Model
 
     protected $primaryKey = 'id_ubicacion';
 
+    protected $fillable = [
+        'nombre',
+        'descripcion',
+    ];
+
     public function inventarios()
     {
         return $this->hasMany(Inventario::class, 'id_ubicacion');

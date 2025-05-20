@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 
 class UbicacionResource extends Resource
@@ -24,7 +25,7 @@ class UbicacionResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-        >schema([
+        ->schema([
             TextInput::make('nombre')->required()->maxLength(100),
             Textarea::make('descripcion')->nullable(),
         ]);

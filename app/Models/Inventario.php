@@ -14,6 +14,13 @@ class Inventario extends Model
 
     protected $primaryKey = 'id_inventario';
 
+    protected $fillable = [
+        'id_producto_sku',
+        'id_inventario',
+        'cantidad',
+        'fecha_actualizacion',
+    ];
+
     public function producto()
     {
         return $this->belongsTo(ProductoSku::class, 'id_producto_sku');

@@ -29,7 +29,7 @@ class InventarioResource extends Resource
         return $form
         ->schema([
             Select::make('id_producto_sku')
-                ->relationship('productoSKU', 'name')
+                ->relationship('producto', 'nombre')
                 ->label('Producto')
                 ->required(),
             TextInput::make('cantidad')->numeric()->required(),
@@ -41,7 +41,7 @@ class InventarioResource extends Resource
     {
         return $table
         ->columns([
-            TextColumn::make('productoSKU.nombre')->label('Producto'),
+            TextColumn::make('producto.nombre')->label('Producto'),
             TextColumn::make('cantidad'),
             TextColumn::make('fecha_actualizacion')->date(),
         ])

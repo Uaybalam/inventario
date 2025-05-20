@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory; 
+use App\Models\Inventario;
+use App\Models\Categoria;
+use App\Models\Transaccion;
 class ProductoSku extends Model
 {
     use HasFactory;
 
     protected $primaryKey = 'id_producto_sku';
-    protected $fillable = ['name', 'descripcion'];
+    protected $fillable = ['nombre', 'descripcion', 'id_categoria'];
 
     public function categoria()
     {

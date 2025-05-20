@@ -10,6 +10,11 @@ class Responsable extends Model
 
     protected $primaryKey = 'id_responsable';
 
+    protected $fillable = [
+        'nombre',
+        'descripcion'
+    ];
+
     public function inventarios()
     {
         return $this->hasMany(Inventario::class, 'id_responsable');
