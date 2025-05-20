@@ -5,8 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory; 
 use \App\Models\ProductoSku;
-use \App\Models\ubicacion;
+use \App\Models\Ubicacion;
 use \App\Models\Responsable;
+use \App\Models\Estado;
+use \App\Models\User;
 
 class Inventario extends Model
 {
@@ -19,6 +21,9 @@ class Inventario extends Model
         'id_inventario',
         'cantidad',
         'fecha_actualizacion',
+        'id_responsable',
+        'id_ubicacion',
+        'id_estado',
     ];
 
     public function producto()
@@ -36,4 +41,12 @@ class Inventario extends Model
     {
         return $this->belongsTo(Responsable::class, 'id_responsable');
     }
+    public function usuario()
+{
+    return $this->belongsTo(User::class, 'id_usuario');
+}
+public function estado()
+{
+    return $this->belongsTo(\App\Models\Estado::class, 'id_estado');
+}
 }

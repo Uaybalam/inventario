@@ -17,12 +17,15 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Actions\BulkAction;
+use Illuminate\Database\Eloquent\Collection; 
 
 class InventarioResource extends Resource
 {
     protected static ?string $model = Inventario::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
+    protected static ?string $navigationLabel = 'Inventario';
 
     public static function form(Form $form): Form
     {
@@ -44,6 +47,9 @@ class InventarioResource extends Resource
             TextColumn::make('producto.nombre')->label('Producto'),
             TextColumn::make('cantidad'),
             TextColumn::make('fecha_actualizacion')->date(),
+            TextColumn::make('ubicacion.nombre'),
+            TextColumn::make('estado.nombre'),
+            TextColumn::make('responsable.nombre')->label('Responsable actual'),
         ])
             ->filters([
                 //
@@ -53,6 +59,57 @@ class InventarioResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    BulkAction::make('asignarResponsable')
+                    ->label('Asignar responsable')
+                    ->icon('heroicon-m-user-plus')
+                    ->action(function (Collection $records, array $data) {
+                        foreach ($records as $record) {
+                            $record->update(['id_responsable' => $data['id_responsable']]);
+                        }
+                    })
+                    ->form([
+                        Forms\Components\Select::make('id_responsable')
+                            ->relationship('responsable', 'nombre') // Relación definida en Inventario
+                            ->required()
+                            ->searchable()
+                            ->label('Selecciona un responsable'),
+                    ])
+                    ->deselectRecordsAfterCompletion(true),
+                    // Acción masiva: Asignar ubicación
+                BulkAction::make('asignarUbicacion')
+                ->label('Asignar ubicación')
+                ->icon('heroicon-m-map-pin')
+                ->action(function (Collection $records, array $data) {
+                    foreach ($records as $record) {
+                        $record->update(['id_ubicacion' => $data['ubicacion']]);
+                    }
+                })
+                ->form([
+                    Forms\Components\Select::make('ubicacion')
+                        ->relationship('ubicacion', 'nombre') // Usa la relación definida en Inventario
+                        ->required()
+                        ->searchable()
+                        ->label('Selecciona una ubicación'),
+                ])
+                ->deselectRecordsAfterCompletion(true),
+
+            // Acción masiva: Asignar estado
+            BulkAction::make('asignarEstado')
+                ->label('Asignar estado')
+                ->icon('heroicon-m-tag')
+                ->action(function (Collection $records, array $data) {
+                    foreach ($records as $record) {
+                        $record->update(['id_estado' => $data['estado']]);
+                    }
+                })
+                ->form([
+                    Forms\Components\Select::make('estado')
+                    ->relationship('estado', 'nombre')
+                    ->required()
+                    ->searchable()
+                    ->label('Selecciona un estado'),
+                ])
+                ->deselectRecordsAfterCompletion(true),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);

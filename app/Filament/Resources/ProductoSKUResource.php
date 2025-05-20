@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductoSKUResource\Pages;
 use App\Filament\Resources\ProductoSKUResource\RelationManagers;
 use App\Models\ProductoSku;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -16,6 +17,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkAction;
 
 class ProductoSKUResource extends Resource
 {
@@ -52,6 +55,22 @@ class ProductoSKUResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    // Acción personalizada: Asignar responsable
+                BulkAction::make('asignarResponsable')
+                ->label('Asignar responsable')
+                ->icon('heroicon-m-user-plus')
+                ->action(function (Collection $records, array $data) {
+                    foreach ($records as $record) {
+                        $record->inventario()->update(['id_usuario' => $data['id_usuario']]);
+                    }
+                })
+                ->form([
+                    Forms\Components\Select::make('id_usuario')
+                        ->relationship('user', 'name')
+                        ->required()
+                        ->label('Selecciona un responsable'),
+                ])
+                ->deselectRecordsAfterCompletion(true),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);

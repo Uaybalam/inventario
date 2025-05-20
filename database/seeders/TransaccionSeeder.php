@@ -15,7 +15,7 @@ class TransaccionSeeder extends Seeder
 {
     Transaccion::create([
         'id_producto_sku' => 1,
-        'tipo_transaccion' => 'Entrada',
+        'tipo' => 'Entrada',
         'descripcion' => 'Entrada inicial de inventario',
         'fecha_transaccion' => now(),
     ]);

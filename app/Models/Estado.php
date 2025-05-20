@@ -9,6 +9,11 @@ class Estado extends Model
     use HasFactory;
 
     protected $primaryKey = 'id_estado';
+    
+    protected $fillable = [
+        'nombre',
+        'descripcion'
+    ];
 
     public function inventarios()
     {

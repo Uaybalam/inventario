@@ -36,6 +36,9 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Resources\InventarioResource::class,
                 \App\Filament\Resources\UbicacionResource::class,
                 \App\Filament\Resources\ResponsableResource::class,
+                \App\Filament\Resources\TransaccionResource::class,
+                \App\Filament\Resources\CategoriaResource::class,
+                \App\Filament\Resources\EstadoResource::class,
             ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
