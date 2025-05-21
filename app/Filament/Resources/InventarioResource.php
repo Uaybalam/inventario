@@ -19,6 +19,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection; 
+use Filament\Tables\Actions\Action;
+use Illuminate\Support\Facades\Route;
 
 class InventarioResource extends Resource
 {
@@ -56,6 +58,13 @@ class InventarioResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Action::make('generarResponsiva')
+    ->label('Generar Responsiva')
+    ->icon('heroicon-o-document')
+    ->action(function ($record) {
+        return redirect()->route('pdf.responsiva', ['responsable' => $record->id_responsable]);
+    })
+    ->visible(fn ($record) => $record->id_responsable !== null),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

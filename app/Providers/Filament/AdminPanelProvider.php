@@ -18,6 +18,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Widgets\InventarioDashboard;
+use Filament\Navigation\NavigationGroup;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -29,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Indigo,
             ])
             ->resources([
                 \App\Filament\Resources\ProductoSKUResource::class,
@@ -39,6 +40,12 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Resources\TransaccionResource::class,
                 \App\Filament\Resources\CategoriaResource::class,
                 \App\Filament\Resources\EstadoResource::class,
+            ])
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label('Relacionados')
+                    ->collapsible(false),
+                
             ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([

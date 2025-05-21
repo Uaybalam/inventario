@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Inventario;
 use App\Models\Transaccion;
+use Illuminate\Support\Facades\Auth;
 
 class InventarioObserver
 {
@@ -22,19 +23,54 @@ class InventarioObserver
     {
         $changes = $inventario->getChanges();
         
-        foreach($changes as $field => $newValue){
-            if (in_array($field, ['ubicacion', 'estado', 'id_usuario'])) {
-                Transaccion::create([
-                    'id_producto_sku' => $inventario->id_producto_sku,
-                    'id_usuario' => Auth::id(),
-                    'tipo' => 'actualizacion',
-                    'campo_modificado' => $field,
-                    'valor_anterior' => $inventario->getOriginal($field),
-                    'valor_nuevo' => $newValue,
-                    'descripcion' => "Se actualizó el campo '$field'",
-                    'ubicacion' => $inventario->ubicacion,
-                ]);
+        
+        foreach ($changes as $field => $newValue) {
+            // Campos a registrar
+            if (! in_array($field, ['id_ubicacion', 'id_estado', 'id_responsable'])) {
+                continue;
             }
+
+            // Traducción del campo
+            $campoLabel = match ($field) {
+                'id_ubicacion' => 'Ubicación',
+                'id_estado' => 'Estado',
+                'id_responsable' => 'Responsable',
+                default => $field,
+            };
+
+            // Obtener nombres reales del valor anterior y nuevo
+            $valorAnterior = $inventario->getOriginal($field);
+            $valorNuevo = $newValue;
+
+            // Obtener nombres legibles si existen
+            $anteriorNombre = null;
+            $nuevoNombre = null;
+
+            if ($field === 'id_ubicacion') {
+                $anteriorNombre = \App\Models\Ubicacion::find($valorAnterior)?->nombre;
+                $nuevoNombre = \App\Models\Ubicacion::find($valorNuevo)?->nombre;
+            }
+
+            if ($field === 'id_estado') {
+                $anteriorNombre = \App\Models\Estado::find($valorAnterior)?->nombre;
+                $nuevoNombre = \App\Models\Estado::find($valorNuevo)?->nombre;
+            }
+
+            if ($field === 'id_responsable') {
+                $anteriorNombre = \App\Models\Responsable::find($valorAnterior)?->nombre;
+                $nuevoNombre = \App\Models\Responsable::find($valorNuevo)?->nombre;
+            }
+
+            // Guardar en transacciones
+            Transaccion::create([
+                'id_producto_sku' => $inventario->id_producto_sku,
+                'id_usuario' => Auth::id(), // Requiere estar autenticado
+                'tipo' => 'actualizacion',
+                'campo_modificado' => $campoLabel,
+                'valor_anterior' => $anteriorNombre ?? $valorAnterior,
+                'valor_nuevo' => $nuevoNombre ?? $valorNuevo,
+                'descripcion' => "Se actualizó el campo '$campoLabel'",
+            ]);
         }
     }
 

@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\ProductoSku;
+use App\Models\User;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory; 
 class Transaccion extends Model
@@ -20,6 +21,7 @@ class Transaccion extends Model
         'ubicacion',
         'valor_anterior',
         'valor_nuevo',
+        'campo_modificado'
     ];
 
     public function producto()

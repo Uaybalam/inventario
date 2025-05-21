@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('responsables', function (Blueprint $table) {
             $table->id('id_responsable');
             $table->string('nombre', 100);
-            $table->text('descripcion')->nullable();
+            $table->email('email')->nullable();
+            $table->integer('telefono')->nullable();;
             $table->timestamps();
         });
     }

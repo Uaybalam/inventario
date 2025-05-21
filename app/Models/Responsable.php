@@ -12,7 +12,8 @@ class Responsable extends Model
 
     protected $fillable = [
         'nombre',
-        'descripcion'
+        'correo',
+        'telefono'
     ];
 
     public function inventarios()

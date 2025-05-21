@@ -5,6 +5,9 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Inventario;
 use App\Observers\InventarioObserver;
+use App\Observers\TestInventarioObserver;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\Css;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,5 +25,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Inventario::observe(InventarioObserver::class);
+        //Inventario::observe(TestInventarioObserver::class);
+        
     }
 }

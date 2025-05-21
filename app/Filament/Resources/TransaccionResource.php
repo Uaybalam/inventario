@@ -14,12 +14,21 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\ProductoSku;
 use App\Models\User;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions\BulkAction;
+use App\Exports\TransaccionesExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Collection;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 
 class TransaccionResource extends Resource
 {
     protected static ?string $model = Transaccion::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clock';
     protected static ?string $navigationLabel = 'Transacciones';
 
     public static function form(Form $form): Form
@@ -27,7 +36,7 @@ class TransaccionResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('id_producto_sku')
-                ->relationship('productoSku', 'nombre')
+                ->relationship('producto', 'nombre')
                 ->required()
                 ->label('Producto'),
 
@@ -61,26 +70,114 @@ class TransaccionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('productoSku.nombre')->label('Producto'),
-            Tables\Columns\TextColumn::make('usuario.name')->label('Responsable'),
+                
+            Tables\Columns\TextColumn::make('usuario.name')->label('Realizado por'),
             Tables\Columns\TextColumn::make('tipo')->label('Tipo'),
-            Tables\Columns\TextColumn::make('cantidad')->label('Cantidad'),
-            Tables\Columns\TextColumn::make('ubicacion')->label('Ubicación'),
-            Tables\Columns\TextColumn::make('created_at')->label('Fecha')->date(),
-            Tables\Columns\TextColumn::make('campo_modificado')->label('Campo'),
-            Tables\Columns\TextColumn::make('valor_anterior')->label('Anterior'),
-            Tables\Columns\TextColumn::make('valor_nuevo')->label('Nuevo'),
+            Tables\Columns\TextColumn::make('created_at')->label('Fecha')->dateTime(),
+            Tables\Columns\TextColumn::make('producto.nombre')->label('Producto'),
+            //Tables\Columns\TextColumn::make('campo_modificado')->label('Campo'),
+            Tables\Columns\TextColumn::make('descripcion')->label('Se realizo'),
+            //Tables\Columns\TextColumn::make('valor_anterior')->label('Anterior'),
+            // Valor anterior
+            TextColumn::make('valor_anterior')
+                ->label('Anterior')
+                ->formatStateUsing(function ($state, $record) {
+                    if ($record->campo_modificado === 'id_ubicacion') {
+                        return \App\Models\Ubicacion::find($state)?->nombre ?? 'Sin ubicación';
+                    }
+
+                    if ($record->campo_modificado === 'id_estado') {
+                        return \App\Models\Estado::find($state)?->nombre ?? 'Sin estado';
+                    }
+
+                    if ($record->campo_modificado === 'id_responsable') {
+                        return \App\Models\Responsable::find($state)?->nombre ?? 'Sin responsable';
+                    }
+
+                    return $state;
+                }),
+            //Tables\Columns\TextColumn::make('valor_nuevo')->label('Nuevo'),
+            // Valor nuevo
+            TextColumn::make('valor_nuevo')
+                ->label('Nuevo')
+                ->formatStateUsing(function ($state, $record) {
+                    if ($record->campo_modificado === 'id_ubicacion') {
+                        return \App\Models\Ubicacion::find($state)?->nombre ?? 'Sin ubicación';
+                    }
+
+                    if ($record->campo_modificado === 'id_estado') {
+                        return \App\Models\Estado::find($state)?->nombre ?? 'Sin estado';
+                    }
+
+                    if ($record->campo_modificado === 'id_responsable') {
+                        return \App\Models\Responsable::find($state)?->nombre ?? 'Sin responsable';
+                    }
+
+                    return $state;
+                }),
                 
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                //Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    BulkAction::make('exportarAExcel')
+    ->label('Exportar a Excel')
+    ->icon('heroicon-m-arrow-down-tray')
+    ->action(function (Collection $records) {
+        return Excel::download(new class($records) implements FromCollection, WithHeadings, WithMapping
+        {
+            protected $records;
+
+            public function __construct(Collection $records)
+            {
+                $this->records = $records;
+            }
+
+            // Define cómo mapear cada registro
+            public function map($row): array
+            {
+                return [
+                    $row->producto->nombre ?? 'Producto desconocido',
+                    match ($row->campo_modificado) {
+                        'id_ubicacion' => 'Ubicación',
+                        'id_estado' => 'Estado',
+                        'id_responsable' => 'Responsable',
+                        default => $row->campo_modificado,
+                    },
+                    $row->valor_anterior_nombre ?? $row->valor_anterior,
+                    $row->valor_nuevo_nombre ?? $row->valor_nuevo,
+                    $row->usuario->name ?? 'Sin responsable',
+                    \Carbon\Carbon::parse($row->created_at)->format('d/m/Y H:i'),
+                ];
+            }
+
+            // Define los encabezados del archivo Excel
+            public function headings(): array
+            {
+                return [
+                    'Producto',
+                    'Campo Modificado',
+                    'Valor Anterior',
+                    'Valor Nuevo',
+                    'Realizado por',
+                    'Fecha y Hora',
+                ];
+            }
+
+            // Devuelve la colección para exportar
+            public function collection()
+            {
+                return $this->records;
+            }
+        }, 'transacciones_export_' . now()->format('Y-m-d_H:i') . '.xlsx');
+    })
+    ->deselectRecordsAfterCompletion(true),
                 ]),
             ]);
     }

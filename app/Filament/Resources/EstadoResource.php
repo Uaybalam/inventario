@@ -21,6 +21,7 @@ class EstadoResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
     protected static ?string $navigationLabel = 'Estados';
+    protected static ?string $navigationGroup = 'Relacionados';
 
     public static function form(Form $form): Form
     {
