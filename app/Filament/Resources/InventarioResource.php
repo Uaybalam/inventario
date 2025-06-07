@@ -42,88 +42,208 @@ class InventarioResource extends Resource
     {
         return $form
         ->schema([
-            Select::make('id_producto_sku')
-                ->relationship('producto', 'nombre')
-                ->label('Producto')
-                ->required(),
-            TextInput::make('cantidad')->numeric()->required(),
-            Select::make('id_grupo')
-            ->relationship('grupo', 'nombre')
-            ->searchable()
-            ->reactive()
-            ->afterStateUpdated(fn (callable $set) => $set('id_subgrupo', null)),
+            Forms\Components\Card::make()
+                ->schema([
+                    Forms\Components\Grid::make(2)
+                        ->schema([
+                            Forms\Components\Select::make('id_producto_sku')
+                                ->relationship('producto', 'nombre')
+                                ->label(__('Producto'))
+                                ->required()
+                                ->searchable(),
 
-        Select::make('id_subgrupo')
-            ->label('Subgrupo')
-            ->options(function (callable $get) {
-                if (!$get('id_grupo')) {
-                    return [];
-                }
+                            Forms\Components\TextInput::make('cantidad')
+                                ->numeric()
+                                ->required(),
+                        ]),
 
-                return Subgrupo::where('id_grupo', $get('id_grupo'))->pluck('nombre', 'id_subgrupo');
-            })
-            ->searchable()
-            ->reactive()
-            ->afterStateUpdated(fn (callable $set) => $set('id_clase', null)),
+                    Forms\Components\Grid::make(2)
+                        ->schema([
+                            Forms\Components\Select::make('id_ubicacion')
+                                ->relationship('ubicacion', 'nombre')
+                                ->label(__('Ubicación'))
+                                ->searchable()
+                                ->nullable(),
 
-        Select::make('id_clase')
-            ->label('Clase')
-            ->options(function (callable $get) {
-                if (!$get('id_subgrupo')) {
-                    return [];
-                }
+                            Forms\Components\Select::make('id_estado')
+                                ->relationship('estado', 'nombre')
+                                ->label(__('Estado'))
+                                ->searchable()
+                                ->nullable(),
+                        ]),
 
-                return Clase::where('id_subgrupo', $get('id_subgrupo'))->pluck('nombre', 'id_clase');
-            })
-            ->searchable()
-            ->reactive()
-            ->afterStateUpdated(fn (callable $set) => $set('id_subclase', null)),
+                    // Grupo - Subgrupo - Clase - Subclase - COG
+                    Forms\Components\Grid::make(2)
+                        ->schema([
+                            Forms\Components\Select::make('id_grupo')
+                                ->relationship('grupo', 'nombre')
+                                ->label(__('Grupo'))
+                                ->searchable()
+                                ->reactive()
+                                ->afterStateUpdated(fn (callable $set) => $set('id_subgrupo', null)),
 
-        Select::make('id_subclase')
-            ->label('Subclase')
-            ->options(function (callable $get) {
-                if (!$get('id_clase')) {
-                    return [];
-                }
+                            Forms\Components\Select::make('id_subgrupo')
+                                ->label(__('Subgrupo'))
+                                ->options(function (callable $get) {
+                                    if (!$get('id_grupo')) return [];
+                                    return Subgrupo::where('id_grupo', $get('id_grupo'))->pluck('nombre', 'id_subgrupo');
+                                })
+                                ->searchable()
+                                ->reactive()
+                                ->afterStateUpdated(fn (callable $set) => $set('id_clase', null)),
+                        ]),
 
-                return Subclase::where('id_clase', $get('id_clase'))->pluck('nombre', 'id_subclase');
-            })
-            ->searchable()
-            ->label('Subclase')
-            ->afterStateUpdated(function (callable $get, callable $set) {
-                $grupoClave = DB::table('grupos')->where('id_grupo', $get('id_grupo'))->value('clave');
-                $subgrupoClave = DB::table('subgrupos')->where('id_subgrupo', $get('id_subgrupo'))->value('clave');
-                $claseClave = DB::table('clases')->where('id_clase', $get('id_clase'))->value('clave');
-                $subclaseClave = DB::table('subclases')->where('id_subclase', $get('id_subclase'))->value('clave');
-            
-                if ($grupoClave && $subgrupoClave && $claseClave && $subclaseClave) {
-                    $set('cog', "{$grupoClave}{$subgrupoClave}{$claseClave}{$subclaseClave}");
-                }
-            }),
+                    Forms\Components\Grid::make(2)
+                        ->schema([
+                            Forms\Components\Select::make('id_clase')
+                                ->label(__('Clase'))
+                                ->options(function (callable $get) {
+                                    if (!$get('id_subgrupo')) return [];
+                                    return Clase::where('id_subgrupo', $get('id_subgrupo'))->pluck('nombre', 'id_clase');
+                                })
+                                ->searchable()
+                                ->reactive()
+                                ->afterStateUpdated(fn (callable $set) => $set('id_subclase', null)),
 
-        TextInput::make('cog')
-        ->label('COG')
-    ->dehydrated()
-    ->reactive()
-    ->afterStateUpdated(function (callable $set, $state) {
-        if (strlen($state) === 4) {
-            $grupoClave = $state[0];
-            $subgrupoClave = $state[1];
-            $claseClave = $state[2];
-            $subclaseClave = $state[3];
+                            Forms\Components\Select::make('id_subclase')
+                                ->label(__('Subclase'))
+                                ->options(function (callable $get) {
+                                    if (!$get('id_clase')) return [];
+                                    return Subclase::where('id_clase', $get('id_clase'))->pluck('nombre', 'id_subclase');
+                                })
+                                ->searchable()
+                                ->afterStateUpdated(function (callable $get, callable $set) {
+                                    $grupoClave = DB::table('grupos')->where('id_grupo', $get('id_grupo'))->value('clave');
+                                    $subgrupoClave = DB::table('subgrupos')->where('id_subgrupo', $get('id_subgrupo'))->value('clave');
+                                    $claseClave = DB::table('clases')->where('id_clase', $get('id_clase'))->value('clave');
+                                    $subclaseClave = DB::table('subclases')->where('id_subclase', $get('id_subclase'))->value('clave');
 
-            $idGrupo = DB::table('grupos')->where('clave', $grupoClave)->value('id_grupo');
-            $idSubgrupo = DB::table('subgrupos')->where('clave', $subgrupoClave)->where('id_grupo', $idGrupo)->value('id_subgrupo');
-            $idClase = DB::table('clases')->where('clave', $claseClave)->where('id_subgrupo', $idSubgrupo)->value('id_clase');
-            $idSubclase = DB::table('subclases')->where('clave', $subclaseClave)->where('id_clase', $idClase)->value('id_subclase');
+                                    if ($grupoClave && $subgrupoClave && $claseClave && $subclaseClave) {
+                                        $set('cog', "{$grupoClave}{$subgrupoClave}{$claseClave}{$subclaseClave}");
+                                    }
+                                }),
+                        ]),
 
-            $set('id_grupo', $idGrupo);
-            $set('id_subgrupo', $idSubgrupo);
-            $set('id_clase', $idClase);
-            $set('id_subclase', $idSubclase);
-        }
-    }),
-        ]);
+                    Forms\Components\TextInput::make('cog')
+                        ->label(__('COG'))
+                        ->dehydrated()
+                        ->reactive()
+                        ->afterStateUpdated(function (callable $set, $state) {
+                            if (strlen($state) === 4) {
+                                $grupoClave = $state[0];
+                                $subgrupoClave = $state[1];
+                                $claseClave = $state[2];
+                                $subclaseClave = $state[3];
+
+                                $idGrupo = DB::table('grupos')->where('clave', $grupoClave)->value('id_grupo');
+                                $idSubgrupo = DB::table('subgrupos')->where('clave', $subgrupoClave)->where('id_grupo', $idGrupo)->value('id_subgrupo');
+                                $idClase = DB::table('clases')->where('clave', $claseClave)->where('id_subgrupo', $idSubgrupo)->value('id_clase');
+                                $idSubclase = DB::table('subclases')->where('clave', $subclaseClave)->where('id_clase', $idClase)->value('id_subclase');
+
+                                $set('id_grupo', $idGrupo);
+                                $set('id_subgrupo', $idSubgrupo);
+                                $set('id_clase', $idClase);
+                                $set('id_subclase', $idSubclase);
+                            }
+                        }),
+
+                    // Información adicional
+                    Forms\Components\Grid::make(2)
+                        ->schema([
+                            Forms\Components\TextInput::make('ur')
+                                ->label(__('UR'))
+                                ->nullable(),
+
+                            Forms\Components\TextInput::make('ua')
+                                ->label(__('UA'))
+                                ->nullable(),
+                        ]),
+
+                    Forms\Components\Grid::make(2)
+                        ->schema([
+                            Forms\Components\TextInput::make('anno')
+                                ->label(__('Año'))
+                                ->nullable(),
+
+                            Forms\Components\TextInput::make('numero_consecutivo')
+                                ->label(__('Número Consecutivo'))
+                                ->numeric()
+                                ->nullable(),
+                        ]),
+
+                    Forms\Components\TextInput::make('num_activo')
+                        ->label(__('Número de Activo'))
+                        ->nullable(),
+
+                    Forms\Components\Grid::make(2)
+                        ->schema([
+                            Forms\Components\TextInput::make('num_factura')
+                                ->label(__('Número de Factura'))
+                                ->nullable(),
+
+                            Forms\Components\TextInput::make('fecha')
+                                ->label(__('Fecha'))
+                                ->nullable(),
+                        ]),
+
+                    Forms\Components\Grid::make(2)
+                        ->schema([
+                            Forms\Components\TextInput::make('proveedor')
+                                ->label(__('Proveedor'))
+                                ->nullable(),
+
+                            Forms\Components\TextInput::make('modelo')
+                                ->label(__('Modelo'))
+                                ->nullable(),
+                        ]),
+
+                    Forms\Components\TextInput::make('num_serie')
+                        ->label(__('Número de Serie'))
+                        ->nullable(),
+
+                    Forms\Components\Textarea::make('otras_especificaciones')
+                        ->label(__('Otras Especificaciones'))
+                        ->columnSpanFull()
+                        ->rows(3),
+
+                    Forms\Components\TextInput::make('fuente_financiamiento')
+                        ->label(__('Fuente de Financiamiento'))
+                        ->nullable(),
+
+                    // Responsables
+                    Forms\Components\Grid::make(2)
+                        ->schema([
+                            Forms\Components\Select::make('id_responsable')
+                                ->relationship('responsable', 'nombre')
+                                ->label(__('Responsable'))
+                                ->searchable()
+                                ->nullable(),
+
+                            Forms\Components\Select::make('id_resguardante')
+                                ->relationship('resguardante', 'nombre')
+                                ->label(__('Resguardante'))
+                                ->searchable()
+                                ->nullable(),
+                        ]),
+
+                    // Número de inventario y fechas
+                    Forms\Components\Grid::make(2)
+                        ->schema([
+                            Forms\Components\TextInput::make('num_inventario')
+                                ->label(__('Número de Inventario'))
+                                ->numeric()
+                                ->nullable(),
+
+                            Forms\Components\DatePicker::make('fecha_validacion')
+                                ->label(__('Fecha de Validación'))
+                                ->nullable(),
+                        ]),
+
+                    Forms\Components\DatePicker::make('fecha_actualizacion')
+                        ->label(__('Fecha de Actualización'))
+                        ->nullable(),
+                    ]),
+                ]);
     }
 
     public static function table(Table $table): Table
