@@ -28,8 +28,8 @@ class UbicacionResource extends Resource
     {
         return $form
         ->schema([
-            TextInput::make('nombre')->required()->maxLength(100),
-            Textarea::make('descripcion')->nullable(),
+            TextInput::make('nombre')->required()->maxLength(100)->label('clave'),
+            Textarea::make('descripcion')->nullable()->placeholder('Concepto, Edificio y Area'),
         ]);
     }
 

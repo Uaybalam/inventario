@@ -12,6 +12,7 @@ class ResponsableSeeder extends Seeder
      */
     public function run()
 {
-    Responsable::create(['nombre' => 'Juan Pérez', 'descripcion' => 'Encargado general']);
+    Responsable::create(['nombre' => 'Juan Pérez', 'telefono' => '22123323443', 'correo' => 'juan@correo.com']);
+
 }
 }

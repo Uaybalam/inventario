@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('responsables', function (Blueprint $table) {
-            $table->id('id_responsable');
-            $table->string('nombre', 100);
-            $table->string('correo')->nullable();
-            $table->bigInteger('telefono')->nullable();;
+        Schema::create('clases', function (Blueprint $table) {
+            $table->id('id_clase');
+            $table->unsignedBigInteger('id_subgrupo');
+            $table->foreign('id_subgrupo')
+            ->references('id_subgrupo')
+            ->on('subgrupos');
+            $table->string('clave');
+            $table->string('nombre');
             $table->timestamps();
         });
     }
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('responsables');
+        Schema::dropIfExists('clase');
     }
 };

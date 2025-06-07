@@ -38,7 +38,6 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Resources\UbicacionResource::class,
                 \App\Filament\Resources\ResponsableResource::class,
                 \App\Filament\Resources\TransaccionResource::class,
-                \App\Filament\Resources\CategoriaResource::class,
                 \App\Filament\Resources\EstadoResource::class,
             ])
             ->navigationGroups([

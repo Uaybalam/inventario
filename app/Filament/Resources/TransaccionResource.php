@@ -71,12 +71,12 @@ class TransaccionResource extends Resource
         return $table
             ->columns([
                 
-            Tables\Columns\TextColumn::make('usuario.name')->label('Realizado por'),
-            Tables\Columns\TextColumn::make('tipo')->label('Tipo'),
-            Tables\Columns\TextColumn::make('created_at')->label('Fecha')->dateTime(),
+            Tables\Columns\TextColumn::make('usuario.name')->label('Realizado por')->searchable(),
+            Tables\Columns\TextColumn::make('tipo')->label('Tipo')->searchable(),
+            Tables\Columns\TextColumn::make('created_at')->label('Fecha')->dateTime()->searchable(),
             Tables\Columns\TextColumn::make('producto.nombre')->label('Producto'),
             //Tables\Columns\TextColumn::make('campo_modificado')->label('Campo'),
-            Tables\Columns\TextColumn::make('descripcion')->label('Se realizo'),
+            Tables\Columns\TextColumn::make('descripcion')->label('Se realizo')->searchable(),
             //Tables\Columns\TextColumn::make('valor_anterior')->label('Anterior'),
             // Valor anterior
             TextColumn::make('valor_anterior')
@@ -181,6 +181,7 @@ class TransaccionResource extends Resource
                 ]),
             ]);
     }
+    
 
     public static function getRelations(): array
     {
@@ -188,6 +189,10 @@ class TransaccionResource extends Resource
             //
         ];
     }
+    public static function canCreate(): bool
+{
+    return false;
+}
 
     public static function getPages(): array
     {

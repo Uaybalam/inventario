@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('producto_skus', function (Blueprint $table) {
             $table->id('id_producto_sku');
+            $table->string('codigo_lpn')->nullable();
             $table->string('nombre', 100);
             $table->text('descripcion')->nullable();
-            $table->foreignId('id_categoria')->constrained('categorias', 'id_categoria');
             $table->timestamps();
         });
         

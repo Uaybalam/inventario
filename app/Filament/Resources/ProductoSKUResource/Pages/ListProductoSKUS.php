@@ -9,6 +9,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListProductoSKUS extends ListRecords
 {
     protected static string $resource = ProductoSKUResource::class;
+    protected ?string $heading = 'Inventario de Productos';
 
     protected function getHeaderActions(): array
     {

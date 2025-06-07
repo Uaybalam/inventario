@@ -43,7 +43,7 @@ class EstadoResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('nombre')->searchable(),
-                TextColumn::make('descripcion')->limit(50),
+                TextColumn::make('descripcion')->limit(50)->searchable(),
             ])
             ->filters([
                 //

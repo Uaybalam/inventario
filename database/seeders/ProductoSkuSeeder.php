@@ -16,13 +16,11 @@ class ProductoSkuSeeder extends Seeder
     ProductoSku::create([
         'nombre' => 'Monitor Samsung 24"',
         'descripcion' => 'Pantalla Full HD',
-        'id_categoria' => 1,
     ]);
 
     ProductoSku::create([
         'nombre' => 'Resma de papel A4',
         'descripcion' => '500 hojas blancas',
-        'id_categoria' => 2,
     ]);
 }
 }

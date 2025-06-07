@@ -25,6 +25,8 @@ class ProductoSKUResource extends Resource
     protected static ?string $model = ProductoSKU::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-computer-desktop';
+    protected static ?string $navigationLabel= 'Productos';
+    protected static ?string $navigationGroup = 'Relacionados';
 
     public static function form(Form $form): Form
     {
@@ -32,10 +34,9 @@ class ProductoSKUResource extends Resource
         ->schema([
             TextInput::make('nombre')->required()->maxLength(100),
             Textarea::make('descripcion')->nullable(),
-            Select::make('id_categoria')
-                ->relationship('categoria', 'nombre')
-                ->required()
-                ->label('Categoría'),
+            
+            TextInput::make('codigo_lpn')
+                ->label('Codigo General'),
         ]);
     }
 
@@ -43,9 +44,10 @@ class ProductoSKUResource extends Resource
     {
         return $table
         ->columns([
+            TextColumn::make('codigo_lpn')->label('Codigo general')->searchable(),
             TextColumn::make('nombre')->sortable()->searchable(),
             TextColumn::make('descripcion')->limit(50),
-            TextColumn::make('categoria.nombre')->label('Categoría'),
+
         ])
             ->filters([
                 //

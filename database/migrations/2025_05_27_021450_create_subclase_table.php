@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categorias', function (Blueprint $table) {
-            $table->id('id_categoria');
+        Schema::create('subclases', function (Blueprint $table) {
+            $table->id('id_subclase');
+            $table->unsignedBigInteger('id_clase')->nullable();
+            $table->foreign('id_clase')
+            ->references('id_clase')->on('clases');
+            $table->string('clave');
             $table->string('nombre', 100);
-            $table->text('descripcion')->nullable();
+            $table->tinyInteger('tipo_gasto')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categorias');
+        Schema::dropIfExists('subclase');
     }
 };

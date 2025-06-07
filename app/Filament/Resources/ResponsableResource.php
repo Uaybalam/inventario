@@ -36,8 +36,8 @@ class ResponsableResource extends Resource
         return $table
         ->columns([
             TextColumn::make('nombre')->searchable(),
-            TextColumn::make('correo'),
-            TextColumn::make('telefono'),
+            TextColumn::make('correo')->searchable(),
+            TextColumn::make('telefono')->searchable(),
         ])
             ->filters([
                 //
