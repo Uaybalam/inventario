@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('id_clase')
             ->references('id_clase')->on('clases');
             $table->string('clave');
-            $table->string('nombre', 100);
+            $table->string('nombre', 255);
             $table->tinyInteger('tipo_gasto')->nullable();
             $table->timestamps();
         });
