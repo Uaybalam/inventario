@@ -1,4 +1,4 @@
-# 📆 Sistema de Inventario - Laravel + Filament
+# 📆 Sistema de Inventario TSJZ - Laravel 
 
 Sistema web para gestión de inventarios, con trazabilidad, responsables, exportación a Excel y panel administrativo moderno.
 
