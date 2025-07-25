@@ -36,7 +36,7 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Resources\ProductoSKUResource::class,
                 \App\Filament\Resources\InventarioResource::class,
                 \App\Filament\Resources\UbicacionResource::class,
-                \App\Filament\Resources\ResponsableResource::class,
+                \App\Filament\Resources\EmpleadoResource::class,
                 \App\Filament\Resources\TransaccionResource::class,
                 \App\Filament\Resources\EstadoResource::class,
             ])

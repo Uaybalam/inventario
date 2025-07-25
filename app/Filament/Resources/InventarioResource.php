@@ -30,6 +30,7 @@ use App\Models\Subgrupo;
 use App\Models\Grupo;
 use App\Models\Clase;
 use App\Models\Subclase;
+use App\Models\Empleado;
 
 class InventarioResource extends Resource
 {
@@ -37,6 +38,7 @@ class InventarioResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
     protected static ?string $navigationLabel = 'Inventario';
+    
 
     public static function form(Form $form): Form
     {
@@ -44,8 +46,10 @@ class InventarioResource extends Resource
         ->schema([
             Forms\Components\Card::make()
                 ->schema([
-                    Forms\Components\Grid::make(2)
-                        ->schema([
+                    
+                        Forms\Components\TextInput::make('num_activo')
+                        ->label(__('Número de Activo'))
+                        ->nullable(),
                             Forms\Components\Select::make('id_producto_sku')
                                 ->relationship('producto', 'nombre')
                                 ->label(__('Producto'))
@@ -55,7 +59,6 @@ class InventarioResource extends Resource
                             Forms\Components\TextInput::make('cantidad')
                                 ->numeric()
                                 ->required(),
-                        ]),
 
                     Forms\Components\Grid::make(2)
                         ->schema([
@@ -152,11 +155,13 @@ class InventarioResource extends Resource
                         ->schema([
                             Forms\Components\TextInput::make('ur')
                                 ->label(__('UR'))
-                                ->nullable(),
+                                ->nullable()
+                                ->default('ITJMM'),
 
                             Forms\Components\TextInput::make('ua')
                                 ->label(__('UA'))
-                                ->nullable(),
+                                ->nullable()
+                                ->default('ZA'),
                         ]),
 
                     Forms\Components\Grid::make(2)
@@ -171,9 +176,7 @@ class InventarioResource extends Resource
                                 ->nullable(),
                         ]),
 
-                    Forms\Components\TextInput::make('num_activo')
-                        ->label(__('Número de Activo'))
-                        ->nullable(),
+                    
 
                     Forms\Components\Grid::make(2)
                         ->schema([
@@ -213,14 +216,14 @@ class InventarioResource extends Resource
                     // Responsables
                     Forms\Components\Grid::make(2)
                         ->schema([
-                            Forms\Components\Select::make('id_responsable')
-                                ->relationship('responsable', 'nombre')
+                            Forms\Components\Select::make('id')
+                                ->relationship('empleados', 'nombre')
                                 ->label(__('Responsable'))
                                 ->searchable()
                                 ->nullable(),
 
-                            Forms\Components\Select::make('id_resguardante')
-                                ->relationship('resguardante', 'nombre')
+                            Forms\Components\Select::make('id')
+                                ->relationship('empleados', 'nombre')
                                 ->label(__('Resguardante'))
                                 ->searchable()
                                 ->nullable(),

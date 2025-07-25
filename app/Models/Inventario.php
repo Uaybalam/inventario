@@ -15,7 +15,7 @@ use App\Models\Grupo;
 use App\Models\Subgrupo;
 use App\Models\Clase;
 use App\Models\Subclase;
-use App\Models\Empleados;
+use App\Models\Empleado;
 
 class Inventario extends Model
 {
@@ -52,12 +52,12 @@ class Inventario extends Model
     
 public function responsable()
 {
-    return $this->belongsTo(Empleados::class, 'id_responsable', 'id');
+    return $this->belongsTo(Empleado::class, 'id');
 }
 
 public function resguardante()
 {
-    return $this->belongsTo(Empleados::class, 'id_resguardante', 'id');
+    return $this->belongsTo(Empleado::class,'id');
 }
     public function usuario()
 {

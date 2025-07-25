@@ -30,7 +30,10 @@ class TransaccionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
     protected static ?string $navigationLabel = 'Transacciones';
-
+    public static function getModelLabel(): string
+{
+    return 'Transacciones'; 
+}
     public static function form(Form $form): Form
     {
         return $form

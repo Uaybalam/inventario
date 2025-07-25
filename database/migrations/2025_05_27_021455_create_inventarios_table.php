@@ -29,14 +29,10 @@ return new class extends Migration
                   ->references('id_estado')
                   ->on('estados')
                   ->onDelete('set null');
-            $table->unsignedBigInteger('id_grupo')->nullable();
-            $table->unsignedBigInteger('id_subgrupo')->nullable();
-            $table->unsignedBigInteger('id_clase')->nullable();
+            
             $table->unsignedBigInteger('id_subclase')->nullable();
             $table->string('cog')->nullable();
-            $table->foreign('id_grupo')->references('id_grupo')->on('grupos')->onDelete('set null');
-            $table->foreign('id_subgrupo')->references('id_subgrupo')->on('subgrupos')->onDelete('set null');
-            $table->foreign('id_clase')->references('id_clase')->on('clases')->onDelete('set null');
+            
             $table->foreign('id_subclase')->references('id_subclase')->on('subclases')->onDelete('set null');
             $table->string('ur')->nullable();
             $table->string('ua')->nullable();
@@ -51,8 +47,8 @@ return new class extends Migration
             $table->string('num_serie')->nullable();
             $table->string('otras_especificaciones', 512)->nullable();
             $table->string('fuente_financiamiento')->nullable();
-            $table->foreignId('id_responsable')->nullable()->constrained('empleados');
-            $table->foreignId('id_resguardante')->nullable()->constrained('empleados');
+            $table->foreignId('id')->nullable()->constrained('empleado');
+            $table->foreignId('id')->nullable()->constrained('empleado');
             $table->unsignedBigInteger('num_inventario')->nullable();
             $table->date('fecha_validacion')->nullable();
             $table->date('fecha_actualizacion')->nullable();

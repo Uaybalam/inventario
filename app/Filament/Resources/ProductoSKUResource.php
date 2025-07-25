@@ -32,11 +32,14 @@ class ProductoSKUResource extends Resource
     {
         return $form
         ->schema([
+            Forms\Components\Card::make()
+            ->schema([
             TextInput::make('nombre')->required()->maxLength(100),
             Textarea::make('descripcion')->nullable(),
             
             TextInput::make('codigo_lpn')
                 ->label('Codigo General'),
+            ])
         ]);
     }
 

@@ -9,4 +9,8 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateProductoSKU extends CreateRecord
 {
     protected static string $resource = ProductoSKUResource::class;
+
+    public function getTitle(): string{
+        return 'Nuevo Producto';
+    }
 }
